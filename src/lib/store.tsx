@@ -27,6 +27,10 @@ interface VinodexState {
   addWine: (entry: Omit<WineEntry, "id" | "createdAt">) => Promise<WineEntry>;
   deleteWine: (id: string) => Promise<void>;
   setHomeGrid: (ids: string[]) => Promise<void>;
+  setRepresentativeWine: (
+    categoryId: string,
+    wineId: string | null
+  ) => Promise<void>;
 }
 
 const initialSettings: UserSettings = { homeGridCategoryIds: [] };
@@ -75,6 +79,20 @@ export function VinodexProvider({ children }: { children: ReactNode }) {
     setSettings(next);
   }, []);
 
+  const setRepresentativeWine = useCallback<
+    VinodexState["setRepresentativeWine"]
+  >(async (categoryId, wineId) => {
+    await storage.setRepresentativeWine(categoryId, wineId);
+    setWines((prev) =>
+      prev.map((w) => {
+        if (w.foodCategoryId !== categoryId) return w;
+        const shouldFlag = wineId !== null && w.id === wineId;
+        if (!!w.isRepresentative === shouldFlag) return w;
+        return { ...w, isRepresentative: shouldFlag };
+      })
+    );
+  }, []);
+
   const value: VinodexState = {
     isReady,
     categories,
@@ -83,6 +101,7 @@ export function VinodexProvider({ children }: { children: ReactNode }) {
     addWine,
     deleteWine,
     setHomeGrid,
+    setRepresentativeWine,
   };
 
   return (
@@ -123,9 +142,11 @@ export function selectCardData(
   const category = selectCategory(state, categoryId);
   if (!category) return null;
   const list = selectWinesForCategory(state, categoryId);
+  // Prefer the user-pinned representative; otherwise default to most recent.
+  const cover = list.find((w) => w.isRepresentative) ?? list[0];
   return {
     category,
-    latestWine: list[0],
+    coverWine: cover,
     wineCount: list.length,
   };
 }

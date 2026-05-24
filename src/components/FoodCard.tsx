@@ -19,8 +19,8 @@ interface Props {
 // The wine name uses line-clamp-2 so most user-entered names render in full
 // across the 3x3 grid without ellipsis.
 export function FoodCard({ data, onClick, size = "home" }: Props) {
-  const { category, latestWine, wineCount } = data;
-  const isEmpty = !latestWine;
+  const { category, coverWine, wineCount } = data;
+  const isEmpty = !coverWine;
 
   const wineNameSize = size === "home" ? "text-[13px]" : "text-[11px]";
   const chipText = size === "home" ? "text-[11px]" : "text-[10px]";
@@ -44,8 +44,8 @@ export function FoodCard({ data, onClick, size = "home" }: Props) {
       ) : (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={latestWine.photoDataUrl}
-          alt={latestWine.wineName}
+          src={coverWine.photoDataUrl}
+          alt={coverWine.wineName}
           className="absolute inset-0 h-full w-full object-cover"
         />
       )}
@@ -85,9 +85,9 @@ export function FoodCard({ data, onClick, size = "home" }: Props) {
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/55 to-transparent px-2.5 pb-2.5 pt-10">
           <p
             className={`line-clamp-2 break-words font-bold leading-[1.2] text-white ${wineNameSize}`}
-            title={latestWine.wineName}
+            title={coverWine.wineName}
           >
-            {latestWine.wineName}
+            {coverWine.wineName}
           </p>
         </div>
       )}

@@ -18,6 +18,12 @@ export interface VinodexStorage {
     patch: Partial<Omit<WineEntry, "id" | "createdAt">>
   ): Promise<WineEntry>;
   deleteWine(id: string): Promise<void>;
+  // Pin a wine as the cover for its food slot. Pass null to clear (the card
+  // will then fall back to "most recent" automatically).
+  setRepresentativeWine(
+    categoryId: string,
+    wineId: string | null
+  ): Promise<void>;
 
   // ---- User settings ----
   getSettings(): Promise<UserSettings>;

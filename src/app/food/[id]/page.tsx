@@ -86,7 +86,12 @@ export default function FoodDetailPage({ params }: PageProps) {
         ) : (
           <ul className="mt-5 space-y-3">
             {wines.map((w) => (
-              <WineRow key={w.id} entry={w} />
+              <WineRow
+                key={w.id}
+                entry={w}
+                // Only surface the cover-picker when there's a choice to make.
+                showCoverPick={wines.length >= 2}
+              />
             ))}
           </ul>
         )}
@@ -129,8 +134,32 @@ function EmptyState() {
   );
 }
 
-function WineRow({ entry }: { entry: WineEntry }) {
-  const { deleteWine } = useVinodex();
+function StarIcon({ filled }: { filled: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      className="h-5 w-5"
+      fill={filled ? "currentColor" : "none"}
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+    >
+      <path d="M12 2.8l2.93 6.36 6.96.69-5.27 4.77 1.56 7.06L12 17.9l-6.18 3.78 1.56-7.06L2.11 9.85l6.96-.69z" />
+    </svg>
+  );
+}
+
+function WineRow({
+  entry,
+  showCoverPick,
+}: {
+  entry: WineEntry;
+  showCoverPick: boolean;
+}) {
+  const { deleteWine, setRepresentativeWine } = useVinodex();
+  const isRep = !!entry.isRepresentative;
   const date = new Date(entry.createdAt);
   const dateStr = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(
     2,
@@ -142,9 +171,21 @@ function WineRow({ entry }: { entry: WineEntry }) {
     await deleteWine(entry.id);
   };
 
+  const onToggleRep = async () => {
+    // Tapping a filled star clears (back to auto = most recent).
+    // Tapping an empty star pins this wine as the cover.
+    await setRepresentativeWine(entry.foodCategoryId, isRep ? null : entry.id);
+  };
+
   return (
-    <li className="flex gap-3 rounded-2xl border border-muted-2 bg-white p-3 shadow-card">
-      {/* Photo */}
+    <li
+      className={[
+        "flex gap-3 rounded-2xl border bg-white p-3 shadow-card transition-colors",
+        isRep
+          ? "border-wine/50 ring-1 ring-wine/15"
+          : "border-muted-2",
+      ].join(" ")}
+    >
       <div className="h-[88px] w-[66px] shrink-0 overflow-hidden rounded-xl bg-muted">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -154,19 +195,46 @@ function WineRow({ entry }: { entry: WineEntry }) {
         />
       </div>
 
-      {/* Info */}
       <div className="flex min-w-0 flex-1 flex-col">
-        <p
-          className="break-words font-bold leading-tight text-[14px] text-ink"
-          title={entry.wineName}
-        >
-          {entry.wineName}
-        </p>
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <p
+              className="break-words font-bold leading-tight text-[14px] text-ink"
+              title={entry.wineName}
+            >
+              {entry.wineName}
+            </p>
+            {isRep && (
+              <span className="mt-1 inline-flex items-center rounded-full bg-wine/10 px-1.5 py-0.5 text-[10px] font-semibold text-wine">
+                대표 와인
+              </span>
+            )}
+          </div>
+
+          {showCoverPick && (
+            <button
+              type="button"
+              onClick={onToggleRep}
+              aria-label={isRep ? "대표 와인 해제" : "대표 와인으로 설정"}
+              title={isRep ? "대표 와인 해제" : "대표 와인으로 설정"}
+              className={[
+                "-mr-1 -mt-1 shrink-0 rounded-full p-1.5 transition-colors",
+                isRep
+                  ? "text-wine hover:bg-wine/10"
+                  : "text-ink/25 hover:bg-muted/60 hover:text-ink/55",
+              ].join(" ")}
+            >
+              <StarIcon filled={isRep} />
+            </button>
+          )}
+        </div>
+
         {entry.memo && (
           <p className="mt-1 text-[12px] leading-snug text-ink-soft">
             {entry.memo}
           </p>
         )}
+
         <div className="mt-auto flex items-center justify-between pt-2">
           <span className="text-[11px] tabular-nums text-ink/40">
             {dateStr}

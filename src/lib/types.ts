@@ -30,6 +30,9 @@ export interface WineEntry {
   photoDataUrl: string;   // base64 data URL — fine for a localStorage prototype
   memo?: string;
   rating?: number;        // 1-5, optional
+  // If true, this wine is the user-pinned cover for its food slot.
+  // At most one wine per foodCategoryId should have this set to true.
+  isRepresentative?: boolean;
   createdAt: number;      // epoch ms
 }
 
@@ -41,6 +44,8 @@ export interface UserSettings {
 
 export interface FoodCardData {
   category: FoodCategory;
-  latestWine?: WineEntry;  // most-recently-added wine, if any
+  // Wine shown on the card cover. Picks the user-pinned representative if
+  // one is set, else falls back to the most recently added.
+  coverWine?: WineEntry;
   wineCount: number;       // total wines recorded for this food
 }

@@ -106,6 +106,21 @@ export class LocalStorageVinodexStorage implements VinodexStorage {
     );
   }
 
+  async setRepresentativeWine(
+    categoryId: string,
+    wineId: string | null
+  ): Promise<void> {
+    const all = await this.listWines();
+    const updated = all.map((w) => {
+      if (w.foodCategoryId !== categoryId) return w;
+      const shouldFlag = wineId !== null && w.id === wineId;
+      // Avoid object churn when nothing changes.
+      if (!!w.isRepresentative === shouldFlag) return w;
+      return { ...w, isRepresentative: shouldFlag };
+    });
+    write<WineEntry[]>(KEYS.wines, updated);
+  }
+
   async getSettings(): Promise<UserSettings> {
     return read<UserSettings>(KEYS.settings, {
       homeGridCategoryIds: DEFAULT_HOME_GRID_IDS,
