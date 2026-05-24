@@ -10,6 +10,11 @@ interface Props {
   // "home" = signature size used on the 3x3 share grid
   // "collection" = slightly smaller for the dex view
   size?: "home" | "collection";
+  // When set, the card behaves as a selection target: the +N counter is
+  // suppressed and a check/empty-circle is shown in its place.
+  selectMode?: boolean;
+  selected?: boolean;
+  disabled?: boolean;
 }
 
 // Filled cards: full-bleed wine photo, top-left food chip, bottom gradient
@@ -18,7 +23,14 @@ interface Props {
 //
 // The wine name uses line-clamp-2 so most user-entered names render in full
 // across the 3x3 grid without ellipsis.
-export function FoodCard({ data, onClick, size = "home" }: Props) {
+export function FoodCard({
+  data,
+  onClick,
+  size = "home",
+  selectMode = false,
+  selected = false,
+  disabled = false,
+}: Props) {
   const { category, coverWine, wineCount } = data;
   const isEmpty = !coverWine;
 
@@ -29,11 +41,14 @@ export function FoodCard({ data, onClick, size = "home" }: Props) {
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       className={[
         "group relative aspect-[3/4] w-full overflow-hidden rounded-card text-left transition-all",
         isEmpty
           ? "border-2 border-dashed border-muted-2 bg-muted/50 hover:border-wine/40 hover:bg-muted/70"
           : "border border-ink/5 bg-ink shadow-card hover:-translate-y-0.5 hover:shadow-card-hover",
+        selectMode && selected ? "ring-2 ring-wine ring-offset-1 ring-offset-paper" : "",
+        disabled ? "opacity-40 cursor-not-allowed" : "",
       ].join(" ")}
     >
       {/* Photo (filled) or silhouette (empty) */}
@@ -67,11 +82,36 @@ export function FoodCard({ data, onClick, size = "home" }: Props) {
         <CategoryBadge section={category.section} variant="dot" />
       </div>
 
-      {/* Top-right: "+N" counter for multiple wines */}
-      {!isEmpty && wineCount > 1 && (
-        <span className="absolute right-2 top-2 rounded-full bg-paper/85 px-1.5 py-0.5 text-[10px] font-semibold text-ink backdrop-blur-sm">
-          +{wineCount - 1}
+      {/* Top-right: selection indicator (select mode) OR +N counter (normal) */}
+      {selectMode ? (
+        <span
+          className={[
+            "absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full border-2 transition-colors",
+            selected
+              ? "border-wine bg-wine text-paper"
+              : "border-ink/30 bg-paper/85 text-transparent backdrop-blur-sm",
+          ].join(" ")}
+          aria-hidden="true"
+        >
+          <svg
+            viewBox="0 0 20 20"
+            className="h-3.5 w-3.5"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={3}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M4 10.5l4 4 8-9" />
+          </svg>
         </span>
+      ) : (
+        !isEmpty &&
+        wineCount > 1 && (
+          <span className="absolute right-2 top-2 rounded-full bg-paper/85 px-1.5 py-0.5 text-[10px] font-semibold text-ink backdrop-blur-sm">
+            +{wineCount - 1}
+          </span>
+        )
       )}
 
       {/* Bottom overlay: wine name only (memo lives on the detail view). */}

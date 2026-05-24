@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FoodCard } from "@/components/FoodCard";
 import { selectCardData, useVinodex } from "@/lib/store";
@@ -15,9 +16,17 @@ export default function Home() {
   return (
     <div className="px-4 pb-6 pt-7">
       <header className="mb-5 px-0.5">
-        <h1 className="font-serif text-[26px] font-semibold leading-tight text-ink">
-          나의 베스트 페어링
-        </h1>
+        <div className="flex items-start justify-between gap-2">
+          <h1 className="font-serif text-[26px] font-semibold leading-tight text-ink">
+            나의 베스트 페어링
+          </h1>
+          <Link
+            href="/edit"
+            className="shrink-0 rounded-full bg-muted/70 px-3 py-1.5 text-[12px] font-medium text-ink/70 hover:bg-muted"
+          >
+            편집
+          </Link>
+        </div>
         <p className="mt-1 text-[13px] text-ink-soft">
           내가 고른 음식과 와인 9컷
         </p>
