@@ -3,25 +3,46 @@
 @tailwind utilities;
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #faf7f2;
+  --ink: #2d1f1a;
+  --wine: #8b2942;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html,
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+/* Mobile-first viewport frame for the prototype.
+   On wider screens we center a phone-sized canvas. */
+.phone-frame {
+  width: 100%;
+  max-width: 390px;
+  margin-inline: auto;
+  min-height: 100dvh;
+  background: var(--paper);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-main {
+  flex: 1;
+  min-height: 0;
+}
+
+@media (min-width: 768px) {
+  body {
+    background: #efe9df;
+  }
+  .phone-frame {
+    margin-block: 24px;
+    border-radius: 32px;
+    box-shadow: 0 24px 60px -20px rgba(45, 31, 26, 0.18);
+    overflow: hidden;
+    min-height: 812px;
   }
 }
