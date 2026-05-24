@@ -11,8 +11,8 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Vinodex — 음식별 와인 도감",
-  description: "당신만의 와인 도감을 채워보세요",
+  title: "Vinodex — 나의 베스트 페어링",
+  description: "음식과 와인의 만남, 나만의 9컷으로 기록하세요",
 };
 
 export const viewport: Viewport = {

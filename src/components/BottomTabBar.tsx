@@ -11,22 +11,29 @@ interface Tab {
   match: string;
 }
 
-function HomeIcon({ active }: { active: boolean }) {
+function BestIcon({ active }: { active: boolean }) {
+  // 3x3 grid icon mirrors the page's actual layout — visual = meaning.
+  const sw = active ? 2.2 : 1.7;
   return (
     <svg
       viewBox="0 0 24 24"
       fill="none"
       stroke="currentColor"
-      strokeWidth={active ? 2.4 : 1.8}
+      strokeWidth={sw}
+      strokeLinejoin="round"
+      strokeLinecap="round"
       className="h-[22px] w-[22px]"
       aria-hidden="true"
     >
-      <path d="M3 11.5 12 4l9 7.5" strokeLinecap="round" strokeLinejoin="round" />
-      <path
-        d="M5.5 10.5V20h13v-9.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
+      <rect x="3.5" y="3.5" width="5" height="5" rx="1.2" />
+      <rect x="9.5" y="3.5" width="5" height="5" rx="1.2" />
+      <rect x="15.5" y="3.5" width="5" height="5" rx="1.2" />
+      <rect x="3.5" y="9.5" width="5" height="5" rx="1.2" />
+      <rect x="9.5" y="9.5" width="5" height="5" rx="1.2" />
+      <rect x="15.5" y="9.5" width="5" height="5" rx="1.2" />
+      <rect x="3.5" y="15.5" width="5" height="5" rx="1.2" />
+      <rect x="9.5" y="15.5" width="5" height="5" rx="1.2" />
+      <rect x="15.5" y="15.5" width="5" height="5" rx="1.2" />
     </svg>
   );
 }
@@ -52,7 +59,7 @@ function DexIcon({ active }: { active: boolean }) {
 }
 
 const TABS: Tab[] = [
-  { href: "/", label: "홈", match: "/", icon: <></> },
+  { href: "/", label: "베스트", match: "/", icon: <></> },
   { href: "/dex", label: "도감", match: "/dex", icon: <></> },
 ];
 
@@ -80,7 +87,7 @@ export function BottomTabBar() {
                 ].join(" ")}
               >
                 {tab.href === "/" ? (
-                  <HomeIcon active={active} />
+                  <BestIcon active={active} />
                 ) : (
                   <DexIcon active={active} />
                 )}

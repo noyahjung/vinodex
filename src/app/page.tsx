@@ -14,15 +14,14 @@ export default function Home() {
 
   return (
     <div className="px-4 pb-6 pt-7">
-      <header className="mb-1 flex items-baseline gap-2 px-0.5">
-        <h1 className="font-serif text-[26px] font-semibold tracking-tight text-wine">
-          Vinodex
+      <header className="mb-5 px-0.5">
+        <h1 className="font-serif text-[26px] font-semibold leading-tight text-ink">
+          나의 베스트 페어링
         </h1>
-        <span className="text-[12px] text-ink-soft">비노덱스</span>
+        <p className="mt-1 text-[13px] text-ink-soft">
+          내가 고른 음식과 와인 9컷
+        </p>
       </header>
-      <p className="mb-5 px-0.5 text-[13px] text-ink-soft">
-        당신만의 와인 도감을 채워보세요
-      </p>
 
       <div className="grid grid-cols-3 gap-2">
         {ids.length === 0
